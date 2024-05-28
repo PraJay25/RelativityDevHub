@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<style>
+		body {
+			font-family: 'Calibri', sans-serif;
+			line-height: 1.6;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+		}
+
+		.container {
+			width: 80%;
+			margin: auto;
+			overflow: hidden;
+			background: #fff;
+			padding: 10px; /* Reduced padding */
+		}
+
+		.header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px; /* Reduced margin */
+			background: #f9f9f9;
+			padding: 10px;
+			border-radius: 8px;
+		}
+
+			.header .name {
+				text-align: left;
+				margin-bottom: 5px; /* Reduced margin */
+				flex: 1;
+			}
+
+				.header .name h1 {
+					margin: 0;
+					font-family: 'Georgia', serif;
+					font-size: 20px; /* Increased font size for name */
+				}
+
+			.header .info {
+				font-size: 12px; /* Set font size for body text */
+				flex: 2;
+			}
+
+				.header .info p {
+					margin: 1px 0; /* Reduced gap between each info */
+					display: flex;
+					align-items: center;
+				}
+
+					.header .info p i {
+						margin-right: 10px;
+						color: #007BFF; /* Blue color for icons */
+					}
+
+				.header .info a {
+					color: inherit; /* Remove color from URLs */
+					text-decoration: none;
+				}
+
+			.header .profile-pic {
+				width: 100px; /* Increased size */
+				height: 100px; /* Increased size */
+				border-radius: 50%;
+				overflow: hidden;
+				flex-shrink: 0;
+				border: 2px solid #007BFF; /* Blue border for profile picture */
+				align-self: center;
+				margin-top: 10%;
+				margin-right: 10px;
+			}
+
+				.header .profile-pic img {
+					width: 100%;
+					height: auto;
+				}
+
+		.sub-section {
+			flex: 1;
+		}
+
+			.sub-section p i {
+				margin-right: 5px;
+				color: #007BFF;
+			}
+
+		.main-content {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 20px;
+		}
+
+		.experience, .summary, .skills, .awards, .certifications, .my-time, .projects, .education {
+			padding: 10px;
+			background: #f9f9f9;
+			margin-bottom: 20px;
+		}
+
+		.summary, .skills, .awards, .certifications, .my-time, .projects, .education {
+			height: auto;
+			width: 475px;
+		}
+
+		.experience {
+			margin-inline-end: 10px;
+		}
+
+		h2 {
+			font-family: 'Georgia', serif;
+			font-size: 18px;
+			margin-bottom: 10px;
+			position: relative;
+		}
+
+			h2::after {
+				content: '';
+				display: block;
+				width: 100%;
+				height: 2px;
+				background: #060606;
+				position: absolute;
+				bottom: -5px;
+				left: 0;
+			}
+
+		.experience-item {
+			margin-bottom: 20px;
+		}
+
+			.experience-item:last-child {
+				margin-bottom: 0;
+			}
+
+			.experience-item h3 {
+				font-size: 16px;
+				margin: 0;
+			}
+
+			.experience-item p {
+				margin: 5px 0;
+				display: flex;
+				align-items: center;
+			}
+
+				.experience-item p i {
+					margin-right: 5px;
+					color: #007BFF;
+				}
+
+			.experience-item ul {
+				margin: 10px 0 0 20px;
+				padding: 0;
+				list-style-type: disc;
+			}
+
+				.experience-item ul li {
+					margin-bottom: 5px;
+				}
+
+			.experience-item + .experience-item {
+				border-top: 1px dotted #ccc;
+				padding-top: 10px;
+			}
+
+		.skills ul, .awards ul, .certifications ul {
+			padding: 0;
+			list-style: none;
+		}
+
+			.skills .skill-category, .awards ul li, .certifications ul li {
+				margin-bottom: 10px;
+				align-items: justify;
+			}
+
+		.skills .skill-category {
+			padding-bottom: 5px;
+			border-bottom: 1px dotted #ccc;
+		}
+
+			.skills .skill-category:last-child {
+				border-bottom: none;
+			}
+
+		.skills .skill-header {
+			display: flex;
+			align-items: center;
+			margin-bottom: 5px;
+		}
+
+			.skills .skill-header i {
+				margin-right: 10px;
+				color: #007BFF;
+			}
+
+		.skills .skill-list {
+			margin-left: 20px;
+		}
+
+		.awards ul li i, .certifications ul li i {
+			margin-right: 10px;
+			color: #007BFF;
+		}
+
+		.my-time .pie-chart {
+			width: 50%;
+			height: 180px;
+			background: conic-gradient( #007BFF 0% 60%, #00BFFF 60% 80%, #00FFBF 80% 90%, #FFBF00 90% 95%, #FF7F50 95% 100% );
+			border-radius: 50%;
+			margin: 0 auto;
+			position: relative;
+		}
+
+			.my-time .pie-chart::before {
+				position: absolute;
+				top: 30%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: #fff;
+				font-weight: bold;
+			}
+
+			.my-time .pie-chart::after {
+				position: absolute;
+				top: 70%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: #fff;
+				font-weight: bold;
+			}
+
+		.my-time .legend {
+			display: flex;
+			justify-content: space-around;
+			margin-top: 10px;
+		}
+
+			.my-time .legend div {
+				display: flex;
+				align-items: center;
+			}
+
+				.my-time .legend div span {
+					width: 10px;
+					height: 10px;
+					display: inline-block;
+					margin-right: 5px;
+				}
+
+			.my-time .legend .coding span {
+				background: #007BFF;
+			}
+
+			.my-time .legend .code-review span {
+				background: #00BFFF;
+			}
+
+			.my-time .legend .mentoring span {
+				background: #00FFBF;
+			}
+
+			.my-time .legend .training span {
+				background: #FFBF00;
+			}
+
+			.my-time .legend .technical-discussion span {
+				background: #FF7F50;
+			}
+
+		.projects .project-item, .education .education-item {
+			margin-bottom: 20px;
+		}
+
+			.projects .project-item:last-child, .education .education-item:last-child {
+				margin-bottom: 0;
+			}
+
+			.projects .project-item h3, .education .education-item h3 {
+				font-size: 16px;
+				margin: 0;
+			}
+
+			.projects .project-item p, .education .education-item p {
+				margin: 5px 0;
+				display: flex;
+				align-items: center;
+			}
+
+				.projects .project-item i, .education .education-item p i {
+					margin-right: 5px;
+					color: #007BFF;
+				}
+
+		.section-title {
+			font-weight: bold;
+			margin-top: 20px;
+		}
+
+		@media print {
+			body {
+				background-color: #fff;
+			}
+
+			.container {
+				box-shadow: none;
+				width: 100%;
+				padding: 0;
+			}
+
+			.header {
+				margin-bottom: 5px; /* Further reduced margin for print */
+			}
+		}
+	</style>
+	<!-- Add Font Awesome for icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="sub-section">
+				<h1>Jay Prakash</h1>
+				<p><i class="fas fa-briefcase"></i> Tech Lead (Full Stack Engineer)</p>
+				<p><i class="fas fa-phone"></i> +81 70 8380 1713</p>
+				<p><i class="fas fa-envelope"></i> <a href="mailto:er.jay25@gmail.com">er.jay25@gmail.com</a></p>
+			</div>
+			<div class="sub-section">
+				<p>&nbsp; </p>
+				<br>
+				<p><i class="fab fa-github"></i> <a href="https://github.com/PraJay25" target="_blank">github.com/PraJay25</a></p>
+				<p><i class="fab fa-linkedin"></i> <a href="https://linkedin.com/in/jay-prakash-37068624" target="_blank">linkedin.com/in/jay-prakash-37068624</a></p>
+				<p><i class="fas fa-map-marker-alt"></i> Shibuya-ku, Tokyo, Japan</p>
+			</div>
+			<div class="profile-pic">
+				<img src="C:\Users\ts-jay.prakash\Downloads\Backup\Resume - Jay Prakash_files\1683913244541.jpg" alt="Profile Picture">
+			</div>
+		</div>
+		<div class="main-content">
+			<div class="experience width:50%">
+				<h2>Experience</h2>
+				<div class="experience-item">
+					<h3>Rakuten - Tech Lead (Full Stack Engineer)</h3>
+					<p><i class="fas fa-calendar-alt"></i> 02/2024 - current &nbsp; <i class="fas fa-map-marker-alt"></i> Tokyo, Japan</p>
+					<ul>
+						<li>Developed next generation integration platform for internal applications.</li>
+						<li>Optimized resource allocation by effectively prioritizing tasks based on business needs and project timelines.</li>
+						<li>Collaborated with product managers to define technical requirements and develop innovative solutions for complex problems.</li>
+						<li>Ensured seamless integration between front-end and back-end systems by coordinating closely with design teams during development phases.</li>
+						<li>Accelerated deployment times with automation tools and streamlined release processes.</li>
+						<li>Designed and developed applications to leverage Open AI to streamline cyber security process.</li>
+						<li>Streamlined code review processes, improving overall code quality while reducing time spent on revisions.</li>
+					</ul>
+				</div>
+				<div class="experience-item">
+					<h3>Deloitte - Senior Lead Software Engineer</h3>
+					<p><i class="fas fa-calendar-alt"></i> 12/2019 - 01/2024 &nbsp; <i class="fas fa-map-marker-alt"></i> Hyderabad, India</p>
+					<ul>
+						<li>Delivered technical guidance and consultation with application teams, clients and developers for technology domain environments.</li>
+						<li>Implemented and adopted cloud technologies and best practices for automation, configuration, monitoring, and platform scalability.</li>
+						<li>Designed a scalable software architecture to accommodate future enhancements without compromising current functionality.</li>
+						<li>Worked with product management and other stakeholders to understand and prioritize requirements and ensure that technical solutions aligned with business objectives.</li>
+						<li>Implemented and developed applications using Generative AI, and Open AI to enhance productivity and quality.</li>
+						<li>Mentor and coach team members to improve their technical skills and professional growth, while also developing and delivering technical training programs to ensure that team members have the skills they need to perform their roles effectively.</li>
+						<li>Communicated project plans, tracking details, status updates, and risk mitigation plans to cross-functional team.</li>
+					</ul>
+				</div>
+				<div class="experience-item">
+					<h3>United Health Group -Senior Software Engineer</h3>
+					<p><i class="fas fa-calendar-alt"></i> 09/2019 - 12/2019 &nbsp;<i class="fas fa-map-marker-alt"></i> Hyderabad, India</p>
+					<ul>
+						<li>Worked with software development and testing team members to design and develop robust solutions to meet client requirements for functionality, scalability, and performance.</li>
+						<li>Rapidly prototyped new data processing capabilities to confirm integration feasibility into existing systems.</li>
+						<li>Regularly reviewed peers' code contributions, offering constructive feedback to enhance overall product quality.</li>
+						<li>Updated old code bases to modern development standards, improving functionality.</li>
+						<li>Managed multiple projects simultaneously while maintaining strict deadlines and high-quality standards.</li>
+					</ul>
+				</div>
+				<div class="experience-item">
+					<h3>Seanergy Digital - Software Engineer</h3>
+					<p><i class="fas fa-calendar-alt"></i> 06-2018 - 09/2019 &nbsp; <i class="fas fa-map-marker-alt"></i> Hyderabad, India</p>
+					<ul>
+						<li>Responsible for creating Software prototyping and construction - Design, Build and Modify existing business-tier components, Web applications, and database objects.</li>
+						<li>Developed end-to-end software solutions using the latest technologies.</li>
+						<li>Comprehend functional requirements and develop the technical design, using standard patterns.</li>
+						<li>Integrated new technologies into existing systems, increasing capabilities and improving overall performance.</li>
+						<li>Contributed ideas and suggestions in team meetings and delivered updates on deadlines, designs, and enhancements.</li>
+						<li>Developed scalable and maintainable code, ensuring long-term stability of the software.</li>
+					</ul>
+				</div>
+				<div class="experience-item">
+					<h3>Brandpier - Dotnet Developer</h3>
+					<p><i class="fas fa-calendar-alt"></i> 09/2016 - 05/2018 &nbsp; <i class="fas fa-map-marker-alt"></i> Hyderabad, India</p>
+					<ul>
+						<li>Developed applications based on the requirements and was given POC for the e-commerce domain.</li>
+						<li>Design and develop core functionality, implemented third-party services like Zoho, Wordline, Paypal, Stripe, DOKU, CardPe, PayU Money, atom, PesoPay, FedEx, e-delivery and many more.</li>
+						<li>Execution of new technology in the project and assist other software personnel in handling project-related work and other requirements.</li>
+						<li>Troubleshoot and resolve performance issues for databases and software.</li>
+						<li>Effectively communicated progress updates at all stages of the project lifecycle, maintaining transparency among developers.</li>
+					</ul>
+				</div>
+				<div class="experience-item">
+					<h3>SureSoft - Associate Software Engineer</h3>
+					<p><i class="fas fa-calendar-alt"></i> 06/2014 - 09/2016 &nbsp;<i class="fas fa-map-marker-alt"></i> Hyderabad, India</p>
+					<ul>
+						<li>Developed diagrams to describe and lay out logical operational steps.</li>
+						<li>Developed application modules and core functionality, wrote stored procedures, and wrote database queries.</li>
+						<li>Collaborated with product owners to stay current on intended functionality.</li>
+						<li>Optimized test cases to maximize the success of manual software testing.</li>
+						<li>Tested troubleshooting methods and documented resolutions for inclusion in the knowledge base for support team use.</li>
+					</ul>
+				</div>
+			</div>
+			<div>
+				<div class="summary">
+					<h2>Summary</h2>
+					<p>Experienced full-stack engineer with over 10 years in software development, specializing in cyber security, e-discovery, forensics, healthcare, e-logistics, and e-commerce domain. Proficient in both waterfall and agile/scrum methodologies, with a strong background in digital transformation and corporate strategy. Adept at leading teams to achieve corporate goals through innovative and tactical initiatives. Expert in designing and implementing scalable, high-performance systems and driving digital transformation initiatives.</p>
+				</div>
+				<div class="skills">
+					<h2>Skills</h2>
+					<ul>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-code"></i> <strong>Languages:</strong>
+							</div>
+							<div class="skill-list">
+								C#, JavaScript, TypeScript, SQL, NoSQL, LINQ, JSON, XML, HTML, CSS
+							</div>
+						</li>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-cogs"></i> <strong>Frameworks & Libraries:</strong>
+							</div>
+							<div class="skill-list">
+								ASP.Net, ADO.Net, MVC, React.js, Next.js, Node.js, Angular.js, JQuery, WinForms, WPF, WCF, Entity Framework, Tailwind, Bootstrap, Express.js
+							</div>
+						</li>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-drafting-compass"></i> <strong>Design & Architecture:</strong>
+							</div>
+							<div class="skill-list">
+								Microservices, REST API, Web API, Web Services, SOAP, WSDL, Clean Architecture, Design Patterns, TDD (Test-Driven Development), BDD (Behavior-Driven Development), SDLC
+							</div>
+						</li>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-cloud"></i> <strong>Cloud Platforms:</strong>
+							</div>
+							<div class="skill-list">
+								Azure, AWS, Google Cloud Platform (GCP)
+							</div>
+						</li>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-tools"></i> <strong>DevOps & CI/CD:</strong>
+							</div>
+							<div class="skill-list">
+								Docker, Kubernetes, TFS, SVN, GIT, DevOps, CI/CD, Jenkins, GitLab CI, CDN, Load Balancer, Caching Mechanisms, Service Bus, IIS
+							</div>
+						</li>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-robot"></i> <strong>AI & Automation:</strong>
+							</div>
+							<div class="skill-list">
+								Chat GPT 3.5 & 4, Open AI, Generative AI, Robotic Process Automation (RPA), TensorFlow
+							</div>
+						</li>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-shield-alt"></i> <strong>Cybersecurity:</strong>
+							</div>
+							<div class="skill-list">
+								Relativity, Penetration Testing, Vulnerability Assessment
+							</div>
+						</li>
+						<li class="skill-category">
+							<div class="skill-header">
+								<i class="fas fa-project-diagram"></i> <strong>Methodologies:</strong>
+							</div>
+							<div class="skill-list">
+								Agile/Scrum, Waterfall, Kanban, Lean
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div class="awards">
+					<h2>Awards</h2>
+					<ul>
+						<li><i class="fas fa-trophy"></i> The MVP - Deloitte (Oct 2022)</li>
+						<li><i class="fas fa-award"></i> Employee of the Year - Deloitte (Apr 2023)</li>
+						<li><i class="fas fa-medal"></i> Spot Award - Deloitte (Nov 2021)</li>
+						<li><i class="fas fa-star"></i> Excellence in Work - Deloitte (Mar 2021)</li>
+						<li><i class="fas fa-certificate"></i> Outstanding Award - Deloitte (Jul 2022)</li>
+					</ul>
+				</div>
+				<div class="certifications">
+					<h2>Certifications</h2>
+					<ul>
+						<li><i class="fas fa-certificate"></i> Microsoft Certified: AZ-900, AZ-104, AI-100</li>
+						<li><i class="fas fa-certificate"></i> Cloud Computing: Cloud Security - CompTIA</li>
+						<li><i class="fas fa-certificate"></i> Transitioning from Waterfall to Agile Project Management - PMI</li>
+						<li><i class="fas fa-certificate"></i> Six Sigma Foundation - PMI</li>
+					</ul>
+				</div>
+				<div class="education">
+					<h2>Education</h2>
+					<div class="education-item">
+						<h3>Bachelor of Technology in Computer Science</h3>
+						<p><i class="fas fa-university"></i> Biju Patnaik University of Technology, Odisha</p>
+						<p><i class="fas fa-calendar-alt"></i> 2009 - 2013</p>
+					</div>
+				</div>
+				<div class="my-time">
+					<h2>Calendly</h2>
+					<div class="pie-chart"></div>
+					<div class="legend">
+						<div class="coding"><span></span>Coding 60%</div>
+						<div class="code-review"><span></span>Review 20%</div>
+						<div class="mentoring"><span></span> Mentoring 10%</div>
+						<div class="training"><span></span> Training 5%</div>
+						<div class="technical-discussion"><span></span> Scrum 5%</div>
+					</div>
+				</div>
+				<div class="projects">
+					<h2>Projects</h2>
+					<div class="project-item">
+						<h3><i class="fas fa-info-circle"></i>Project - R-Defenders</h3>
+						<p>R-Defenders, a web application that consolidates all cybersecurity tools used within and outside the organization into a single platform. The application enables users to interact with news feeds, follow, comment, like, and share content. Users can also add and rate their products and services, and receive real-time notifications. Advanced search functionality allows users to find detailed information about organizations and employees.</p>
+
+						<p class="section-title">Key Features:</p>
+						<ul>
+							<li><strong>Unified Platform:</strong> Centralizes all cybersecurity tools.</li>
+							<li><strong>User Engagement:</strong> News feeds, Follow, comment, like, and share content.</li>
+							<li><strong>Product Management:</strong> Add and rate products and services.</li>
+							<li><strong>Real-Time Notifications:</strong> Instant updates on feeds, follows, comments, and likes.</li>
+							<li><strong>Advanced Search:</strong> Detailed search for organizational and employee information.</li>
+						</ul>
+
+						<p class="section-title">Security Measures:</p>
+						<ul>
+							<li><strong>Compliance:</strong> Adhered to industry-standard security protocols.</li>
+							<li><strong>Data Protection:</strong> Robust measures to safeguard user and organizational data.</li>
+							<li><strong>Secure Development Lifecycle:</strong> Integrated security throughout development.</li>
+						</ul>
+
+					</div>
+					<div class="project-item">
+						<h3><i class="fas fa-info-circle"></i>Project - NavigAite</h3>
+						<p> Developed a customizable Generative AI solution, NavigAite™, for RelativityOne and Relativity Server to accelerate document-oriented activities such as summarization, responsiveness, privilege, PII calls, and initial contract review. NavigAite integrates with large language models (LLM) via API, supporting in-house or Deloitte-provided models. It automates document review across 95 languages, enhancing review velocity and reducing human effort, thereby creating cost efficiencies. Efficient integration with Relativity allows rapid configuration and deployment, leveraging Deloitte's expertise in document review, Generative AI, data science, and analytics.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
