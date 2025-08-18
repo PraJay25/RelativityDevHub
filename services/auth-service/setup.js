@@ -4,6 +4,11 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Skip setup on Vercel/CI to avoid postinstall loops
+if (process.env.VERCEL || process.env.CI) {
+  process.exit(0);
+}
+
 console.log('🚀 Setting up RelativityDevHub Auth Service...\n');
 
 // Check Node.js version

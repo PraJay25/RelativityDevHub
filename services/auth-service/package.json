@@ -19,7 +19,6 @@
     "db:migrate": "ts-node scripts/migrate.ts",
     "db:seed": "ts-node scripts/seed.ts",
     "setup": "node setup.js",
-    "postinstall": "node setup.js",
     "vercel-build": "npm run build",
     "vercel-dev": "npm run start:dev"
   },
