@@ -8,15 +8,15 @@ services:
     environment:
       POSTGRES_DB: relativity_devhub
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: admin123
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - relativity_devhub_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,14 +26,14 @@ services:
     image: redis:7-alpine
     container_name: relativity_devhub_redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     networks:
       - relativity_devhub_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -51,13 +51,13 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
-      DB_PASSWORD: password
+      DB_PASSWORD: admin123
       DB_DATABASE: relativity_devhub
       DB_SYNCHRONIZE: true
       DB_LOGGING: true
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: 
+      REDIS_PASSWORD:
       REDIS_DB: 0
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       JWT_EXPIRES_IN: 24h
@@ -70,9 +70,10 @@ services:
       BCRYPT_ROUNDS: 12
       RATE_LIMIT_TTL: 60
       RATE_LIMIT_LIMIT: 100
+      CORS_ORIGIN: http://localhost:3000
       LOG_LEVEL: debug
     ports:
-      - "3001:3001"
+      - '3001:3001'
     depends_on:
       postgres:
         condition: service_healthy

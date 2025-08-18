@@ -3,7 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
-import * as compression from 'compression';
+import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { RateLimitInterceptor } from './common/interceptors/rate-limit.interceptor';
@@ -17,22 +17,24 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     logger: new LoggerService(),
   });
-  
+
   const configService = app.get(ConfigService);
   const logger = app.get(LoggerService);
 
   // Security middleware
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "https:"],
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
       },
-    },
-    crossOriginEmbedderPolicy: false,
-  }));
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
 
   // Compression middleware
   app.use(compression());
@@ -50,7 +52,8 @@ async function bootstrap(): Promise<void> {
       transformOptions: {
         enableImplicitConversion: true,
       },
-      disableErrorMessages: configService.get<string>('NODE_ENV') === 'production',
+      disableErrorMessages:
+        configService.get<string>('NODE_ENV') === 'production',
       validationError: {
         target: false,
         value: false,
@@ -66,7 +69,15 @@ async function bootstrap(): Promise<void> {
 
   // CORS configuration
   app.enableCors({
-    origin: configService.get<string>('CORS_ORIGIN', '*'),
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
+      configService.get<string>('CORS_ORIGIN', 'http://localhost:3000'),
+    ].filter(Boolean),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
@@ -76,13 +87,25 @@ async function bootstrap(): Promise<void> {
       'Accept',
       'Authorization',
       'X-API-Key',
+      'Access-Control-Allow-Origin',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods',
     ],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   // Swagger documentation setup
   const config = new DocumentBuilder()
-    .setTitle(configService.get<string>('SWAGGER_TITLE', 'RelativityDevHub Auth API'))
-    .setDescription(configService.get<string>('SWAGGER_DESCRIPTION', 'Authentication service for RelativityDevHub'))
+    .setTitle(
+      configService.get<string>('SWAGGER_TITLE', 'RelativityDevHub Auth API'),
+    )
+    .setDescription(
+      configService.get<string>(
+        'SWAGGER_DESCRIPTION',
+        'Authentication service for RelativityDevHub',
+      ),
+    )
     .setVersion(configService.get<string>('SWAGGER_VERSION', '1.0'))
     .addTag(configService.get<string>('SWAGGER_TAG', 'auth'))
     .addBearerAuth(
@@ -120,17 +143,27 @@ async function bootstrap(): Promise<void> {
     customSiteTitle: 'RelativityDevHub Auth API Documentation',
   });
 
-
-
   // Start the application
   const port = configService.get<number>('PORT', 3001);
   await app.listen(port, '0.0.0.0');
 
-  logger.log(`🚀 Auth service is running on: http://localhost:${port}`, 'Bootstrap');
-  logger.log(`📚 Swagger documentation: http://localhost:${port}/docs`, 'Bootstrap');
-  logger.log(`🔗 API endpoint: http://localhost:${port}/${apiPrefix}`, 'Bootstrap');
+  logger.log(
+    `🚀 Auth service is running on: http://localhost:${port}`,
+    'Bootstrap',
+  );
+  logger.log(
+    `📚 Swagger documentation: http://localhost:${port}/docs`,
+    'Bootstrap',
+  );
+  logger.log(
+    `🔗 API endpoint: http://localhost:${port}/${apiPrefix}`,
+    'Bootstrap',
+  );
   logger.log(`🏥 Health check: http://localhost:${port}/health`, 'Bootstrap');
-  logger.log(`🌍 Environment: ${configService.get<string>('NODE_ENV', 'development')}`, 'Bootstrap');
+  logger.log(
+    `🌍 Environment: ${configService.get<string>('NODE_ENV', 'development')}`,
+    'Bootstrap',
+  );
 
   // Graceful shutdown
   process.on('SIGTERM', async () => {
@@ -146,7 +179,7 @@ async function bootstrap(): Promise<void> {
   });
 }
 
-bootstrap().catch((error) => {
+bootstrap().catch(error => {
   console.error('Failed to start application:', error);
   process.exit(1);
 });
