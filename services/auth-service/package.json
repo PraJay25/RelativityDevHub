@@ -17,7 +17,9 @@
     "format": "prettier --write src/**/*.ts",
     "db:create": "ts-node scripts/create-database.ts",
     "db:migrate": "ts-node scripts/migrate.ts",
-    "db:seed": "ts-node scripts/seed.ts"
+    "db:seed": "ts-node scripts/seed.ts",
+    "setup": "node setup.js",
+    "postinstall": "node setup.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -28,6 +30,8 @@
     "@nestjs/jwt": "^10.0.0",
     "@nestjs/passport": "^10.0.0",
     "@nestjs/config": "^3.0.0",
+    "@nestjs/throttler": "^5.0.0",
+    "@nestjs/schedule": "^4.0.0",
     "typeorm": "^0.3.0",
     "pg": "^8.11.0",
     "bcrypt": "^5.1.0",
@@ -43,7 +47,9 @@
     "compression": "^1.7.0",
     "dotenv": "^16.0.0",
     "swagger-ui-express": "^5.0.0",
-    "swagger-jsdoc": "^6.2.0"
+    "swagger-jsdoc": "^6.2.0",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",

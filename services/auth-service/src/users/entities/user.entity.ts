@@ -48,11 +48,11 @@ export class User {
   email!: string;
 
   @ApiProperty({ description: 'User first name' })
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 100, nullable: false, name: 'first_name' })
   firstName!: string;
 
   @ApiProperty({ description: 'User last name' })
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 100, nullable: false, name: 'last_name' })
   lastName!: string;
 
   @ApiProperty({ description: 'User password (hashed)' })
@@ -77,19 +77,19 @@ export class User {
   status!: UserStatus;
 
   @ApiProperty({ description: 'Whether user email is verified' })
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: false, name: 'email_verified' })
   emailVerified!: boolean;
 
   @ApiProperty({ description: 'Last login timestamp' })
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'last_login_at' })
   lastLoginAt!: Date | null;
 
   @ApiProperty({ description: 'User creation timestamp' })
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt!: Date;
 
   @ApiProperty({ description: 'User last update timestamp' })
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt!: Date;
 
   /**

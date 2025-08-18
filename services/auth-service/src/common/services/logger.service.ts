@@ -1,6 +1,6 @@
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
 import * as winston from 'winston';
-import * as DailyRotateFile from 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 /**
  * Custom logger service using Winston
@@ -98,7 +98,11 @@ export class LoggerService implements NestLoggerService {
    * @param message - The message to log
    * @param meta - Additional metadata
    */
-  logWithMeta(level: string, message: string, meta: Record<string, unknown>): void {
+  logWithMeta(
+    level: string,
+    message: string,
+    meta: Record<string, unknown>,
+  ): void {
     this.logger.log(level, message, meta);
   }
 
@@ -123,7 +127,11 @@ export class LoggerService implements NestLoggerService {
    * @param details - Event details
    * @param userId - Optional user ID
    */
-  logSecurityEvent(event: string, details: Record<string, unknown>, userId?: string): void {
+  logSecurityEvent(
+    event: string,
+    details: Record<string, unknown>,
+    userId?: string,
+  ): void {
     this.logger.warn(`Security Event: ${event}`, {
       event,
       details,

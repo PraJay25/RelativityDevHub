@@ -1,18 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RedisModule } from '@nestjs/redis';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { BullModule } from '@nestjs/bull';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { HealthController } from './health/health.controller';
 import { DatabaseConfig } from './config/database.config';
-import { RedisConfig } from './config/redis.config';
 import { JwtConfig } from './config/jwt.config';
 import { LoggerService } from './common/services/logger.service';
 
@@ -26,44 +23,12 @@ import { LoggerService } from './common/services/logger.service';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', 'env.example'],
-      validationSchema: {
-        type: 'object',
-        required: ['DB_HOST', 'DB_PASSWORD', 'JWT_SECRET'],
-        properties: {
-          NODE_ENV: {
-            type: 'string',
-            enum: ['development', 'production', 'test'],
-            default: 'development',
-          },
-          PORT: {
-            type: 'number',
-            default: 3001,
-          },
-          DB_HOST: {
-            type: 'string',
-          },
-          DB_PASSWORD: {
-            type: 'string',
-          },
-          JWT_SECRET: {
-            type: 'string',
-            minLength: 32,
-          },
-        },
-      },
     }),
 
     // Database
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useClass: DatabaseConfig,
-      inject: [ConfigService],
-    }),
-
-    // Redis
-    RedisModule.forRootAsync({
-      imports: [ConfigModule],
-      useClass: RedisConfig,
       inject: [ConfigService],
     }),
 
@@ -82,31 +47,12 @@ import { LoggerService } from './common/services/logger.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        ttl: config.get<number>('RATE_LIMIT_TTL', 60),
-        limit: config.get<number>('RATE_LIMIT_LIMIT', 100),
-      }),
-    }),
-
-    // Background jobs
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        redis: {
-          host: config.get<string>('REDIS_HOST', 'localhost'),
-          port: config.get<number>('REDIS_PORT', 6379),
-          password: config.get<string>('REDIS_PASSWORD', ''),
-          db: config.get<number>('REDIS_DB', 0),
-        },
-        defaultJobOptions: {
-          removeOnComplete: 100,
-          removeOnFail: 50,
-          attempts: 3,
-          backoff: {
-            type: 'exponential',
-            delay: 2000,
+        throttlers: [
+          {
+            ttl: config.get<number>('RATE_LIMIT_TTL', 60),
+            limit: config.get<number>('RATE_LIMIT_LIMIT', 100),
           },
-        },
+        ],
       }),
     }),
 

@@ -21,48 +21,76 @@ A comprehensive authentication service built with NestJS, TypeScript, and Postgr
 
 ## 🛠️ Installation
 
+### Quick Setup (Recommended)
+
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd services/auth-service
    ```
 
-2. **Install dependencies**
+2. **Run the automated setup**
+
+   ```bash
+   npm run setup
+   ```
+
+   This will automatically:
+   - ✅ Check Node.js and npm versions
+   - ✅ Create `.env` file with proper configuration
+   - ✅ Install all dependencies
+   - ✅ Check PostgreSQL and Redis connections
+   - ✅ Set up database (create, migrate, seed)
+   - ✅ Provide next steps
+
+### Manual Setup (Alternative)
+
+If you prefer manual setup or the automated setup fails:
+
+1. **Install dependencies**
+
    ```bash
    npm install
    ```
 
-3. **Set up environment variables**
+2. **Set up environment variables**
+
    ```bash
    cp env.example .env
    ```
-   
+
    Edit `.env` with your configuration:
+
    ```env
    # Database
    DB_HOST=localhost
    DB_PORT=5432
    DB_USERNAME=postgres
-   DB_PASSWORD=your_password
+   DB_PASSWORD=admin123
    DB_DATABASE=relativity_devhub
-   
+
    # JWT
    JWT_SECRET=your-super-secret-jwt-key-change-in-production
    JWT_EXPIRES_IN=24h
-   
+
+   # CORS
+   CORS_ORIGIN=http://localhost:3000
+
    # Server
    PORT=3001
    NODE_ENV=development
    ```
 
-4. **Set up the database**
+3. **Set up the database**
+
    ```bash
    # Create database
    npm run db:create
-   
+
    # Run migrations
    npm run db:migrate
-   
+
    # Seed initial data
    npm run db:seed
    ```
@@ -70,17 +98,20 @@ A comprehensive authentication service built with NestJS, TypeScript, and Postgr
 ## 🏃‍♂️ Running the Service
 
 ### Development Mode
+
 ```bash
 npm run dev:swagger
 ```
 
 ### Production Mode
+
 ```bash
 npm run build
 npm start
 ```
 
 ### Docker
+
 ```bash
 docker-compose up -d
 ```
@@ -88,6 +119,7 @@ docker-compose up -d
 ## 📚 API Documentation
 
 Once the service is running, access the Swagger documentation at:
+
 - **Swagger UI**: http://localhost:3001/docs
 - **Health Check**: http://localhost:3001/health
 - **API Base**: http://localhost:3001/api/v1
@@ -95,6 +127,7 @@ Once the service is running, access the Swagger documentation at:
 ## 🔐 Authentication Endpoints
 
 ### Register User
+
 ```http
 POST /api/v1/auth/register
 Content-Type: application/json
@@ -108,6 +141,7 @@ Content-Type: application/json
 ```
 
 ### Login User
+
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -119,6 +153,7 @@ Content-Type: application/json
 ```
 
 ### Verify Token
+
 ```http
 GET /api/v1/auth/verify
 Authorization: Bearer <jwt_token>
@@ -127,24 +162,28 @@ Authorization: Bearer <jwt_token>
 ## 👥 User Management Endpoints
 
 ### Get Current User Profile
+
 ```http
 GET /api/v1/users/profile
 Authorization: Bearer <jwt_token>
 ```
 
 ### Get All Users (Admin Only)
+
 ```http
 GET /api/v1/users
 Authorization: Bearer <jwt_token>
 ```
 
 ### Get User by ID (Admin Only)
+
 ```http
 GET /api/v1/users/{id}
 Authorization: Bearer <jwt_token>
 ```
 
 ### Update User Status (Admin Only)
+
 ```http
 PATCH /api/v1/users/{id}/status
 Authorization: Bearer <jwt_token>
@@ -156,6 +195,7 @@ Content-Type: application/json
 ```
 
 ### Update User Role (Admin Only)
+
 ```http
 PATCH /api/v1/users/{id}/role
 Authorization: Bearer <jwt_token>
@@ -170,11 +210,11 @@ Content-Type: application/json
 
 The service comes with pre-configured users for testing:
 
-| Email | Password | Role | Status |
-|-------|----------|------|--------|
-| admin@relativitydevhub.com | admin123 | admin | active |
-| user@relativitydevhub.com | user123 | user | active |
-| reviewer@relativitydevhub.com | user123 | reviewer | active |
+| Email                         | Password | Role     | Status |
+| ----------------------------- | -------- | -------- | ------ |
+| admin@relativitydevhub.com    | admin123 | admin    | active |
+| user@relativitydevhub.com     | user123  | user     | active |
+| reviewer@relativitydevhub.com | user123  | reviewer | active |
 
 ## 🏗️ Project Structure
 
@@ -210,17 +250,17 @@ src/
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DB_HOST` | PostgreSQL host | localhost |
-| `DB_PORT` | PostgreSQL port | 5432 |
-| `DB_USERNAME` | Database username | postgres |
-| `DB_PASSWORD` | Database password | - |
-| `DB_DATABASE` | Database name | relativity_devhub |
-| `JWT_SECRET` | JWT signing secret | - |
-| `JWT_EXPIRES_IN` | JWT expiration time | 24h |
-| `PORT` | Server port | 3001 |
-| `NODE_ENV` | Environment | development |
+| Variable         | Description         | Default           |
+| ---------------- | ------------------- | ----------------- |
+| `DB_HOST`        | PostgreSQL host     | localhost         |
+| `DB_PORT`        | PostgreSQL port     | 5432              |
+| `DB_USERNAME`    | Database username   | postgres          |
+| `DB_PASSWORD`    | Database password   | -                 |
+| `DB_DATABASE`    | Database name       | relativity_devhub |
+| `JWT_SECRET`     | JWT signing secret  | -                 |
+| `JWT_EXPIRES_IN` | JWT expiration time | 24h               |
+| `PORT`           | Server port         | 3001              |
+| `NODE_ENV`       | Environment         | development       |
 
 ### Database Schema
 
@@ -258,32 +298,35 @@ npm run test:e2e
 ## 🐳 Docker
 
 ### Build Image
+
 ```bash
 docker build -t auth-service .
 ```
 
 ### Run Container
+
 ```bash
 docker run -p 3001:3001 auth-service
 ```
 
 ### Docker Compose
+
 ```bash
 docker-compose up -d
 ```
 
 ## 📝 Scripts
 
-| Script | Description |
-|--------|-------------|
+| Script                | Description                           |
+| --------------------- | ------------------------------------- |
 | `npm run dev:swagger` | Start development server with Swagger |
-| `npm run dev:simple` | Start simple Express.js server |
-| `npm run build` | Build for production |
-| `npm start` | Start production server |
-| `npm test` | Run tests |
-| `npm run db:create` | Create database |
-| `npm run db:migrate` | Run database migrations |
-| `npm run db:seed` | Seed database with initial data |
+| `npm run dev:simple`  | Start simple Express.js server        |
+| `npm run build`       | Build for production                  |
+| `npm start`           | Start production server               |
+| `npm test`            | Run tests                             |
+| `npm run db:create`   | Create database                       |
+| `npm run db:migrate`  | Run database migrations               |
+| `npm run db:seed`     | Seed database with initial data       |
 
 ## 🔒 Security Features
 
@@ -310,6 +353,7 @@ This project is licensed under the MIT License.
 ## 🆘 Support
 
 For support and questions:
+
 - Create an issue in the repository
 - Contact the development team
 - Check the API documentation at `/docs`
