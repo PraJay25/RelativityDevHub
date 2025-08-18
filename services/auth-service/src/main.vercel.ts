@@ -12,12 +12,12 @@ let app: any;
 
 async function bootstrap(): Promise<any> {
   if (!app) {
-    app = await NestFactory.create(AppModule);
+    app = await NestFactory.create(AppModule as any);
 
-    const configService = app.get(ConfigService);
+    const configService = app.get(ConfigService as any);
 
     // Security middleware
-    app.use(
+    (app as any).use(
       helmet({
         contentSecurityPolicy: {
           directives: {
@@ -32,11 +32,11 @@ async function bootstrap(): Promise<any> {
     );
 
     // Compression middleware
-    app.use(compression());
+    (app as any).use(compression());
 
     // Global prefix
-    const apiPrefix = configService.get<string>('API_PREFIX', 'api/v1');
-    app.setGlobalPrefix(apiPrefix);
+    const apiPrefix = (configService.get('API_PREFIX') as string) ?? 'api/v1';
+    (app as any).setGlobalPrefix(apiPrefix);
 
     // Global validation pipe with strict settings
     app.useGlobalPipes(
@@ -47,7 +47,7 @@ async function bootstrap(): Promise<any> {
         transformOptions: {
           enableImplicitConversion: true,
         },
-        disableErrorMessages: true, // Disable in production
+        disableErrorMessages: true,
         validationError: {
           target: false,
           value: false,
@@ -66,10 +66,8 @@ async function bootstrap(): Promise<any> {
       origin: [
         'https://your-frontend-domain.vercel.app',
         'https://your-frontend-domain.com',
-        configService.get<string>(
-          'CORS_ORIGIN',
+        (configService.get('CORS_ORIGIN') as string) ??
           'https://your-frontend-domain.vercel.app',
-        ),
       ].filter(Boolean),
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -86,22 +84,18 @@ async function bootstrap(): Promise<any> {
     });
 
     // Swagger documentation setup (only in development)
-    if (configService.get<string>('NODE_ENV') !== 'production') {
+    if ((configService.get('NODE_ENV') as string) !== 'production') {
       const config = new DocumentBuilder()
         .setTitle(
-          configService.get<string>(
-            'SWAGGER_TITLE',
+          (configService.get('SWAGGER_TITLE') as string) ??
             'RelativityDevHub Auth API',
-          ),
         )
         .setDescription(
-          configService.get<string>(
-            'SWAGGER_DESCRIPTION',
+          (configService.get('SWAGGER_DESCRIPTION') as string) ??
             'Authentication service for RelativityDevHub',
-          ),
         )
-        .setVersion(configService.get<string>('SWAGGER_VERSION', '1.0'))
-        .addTag(configService.get<string>('SWAGGER_TAG', 'auth'))
+        .setVersion((configService.get('SWAGGER_VERSION') as string) ?? '1.0')
+        .addTag((configService.get('SWAGGER_TAG') as string) ?? 'auth')
         .addBearerAuth(
           {
             type: 'http',

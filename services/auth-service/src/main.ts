@@ -13,9 +13,9 @@ import { RateLimitInterceptor } from './common/interceptors/rate-limit.intercept
  * Sets up security, validation, documentation, and performance optimizations
  */
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule as any);
 
-  const configService = app.get(ConfigService);
+  const configService = app.get(ConfigService as any);
   // no-op logger in production
 
   // Security middleware
@@ -37,7 +37,7 @@ async function bootstrap(): Promise<void> {
   app.use(compression());
 
   // Global prefix
-  const apiPrefix = configService.get<string>('API_PREFIX', 'api/v1');
+  const apiPrefix = (configService.get('API_PREFIX') as string) ?? 'api/v1';
   app.setGlobalPrefix(apiPrefix);
 
   // Global validation pipe with strict settings
@@ -50,7 +50,7 @@ async function bootstrap(): Promise<void> {
         enableImplicitConversion: true,
       },
       disableErrorMessages:
-        configService.get<string>('NODE_ENV') === 'production',
+        (configService.get('NODE_ENV') as string) === 'production',
       validationError: {
         target: false,
         value: false,
@@ -73,7 +73,7 @@ async function bootstrap(): Promise<void> {
       'http://127.0.0.1:3001',
       'http://localhost:8080',
       'http://127.0.0.1:8080',
-      configService.get<string>('CORS_ORIGIN', 'http://localhost:3000'),
+      (configService.get('CORS_ORIGIN') as string) ?? 'http://localhost:3000',
     ].filter(Boolean),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -95,16 +95,15 @@ async function bootstrap(): Promise<void> {
   // Swagger documentation setup
   const config = new DocumentBuilder()
     .setTitle(
-      configService.get<string>('SWAGGER_TITLE', 'RelativityDevHub Auth API'),
+      (configService.get('SWAGGER_TITLE') as string) ??
+        'RelativityDevHub Auth API',
     )
     .setDescription(
-      configService.get<string>(
-        'SWAGGER_DESCRIPTION',
+      (configService.get('SWAGGER_DESCRIPTION') as string) ??
         'Authentication service for RelativityDevHub',
-      ),
     )
-    .setVersion(configService.get<string>('SWAGGER_VERSION', '1.0'))
-    .addTag(configService.get<string>('SWAGGER_TAG', 'auth'))
+    .setVersion((configService.get('SWAGGER_VERSION') as string) ?? '1.0')
+    .addTag((configService.get('SWAGGER_TAG') as string) ?? 'auth')
     .addBearerAuth(
       {
         type: 'http',
@@ -141,7 +140,7 @@ async function bootstrap(): Promise<void> {
   });
 
   // Start the application
-  const port = configService.get<number>('PORT', 3001);
+  const port = parseInt((configService.get('PORT') as string) ?? '3001', 10);
 
   // For Vercel serverless deployment
   if (process.env.VERCEL) {
