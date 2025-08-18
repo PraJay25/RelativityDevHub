@@ -1,6 +1,14 @@
 {
   "version": 2,
-  "builds": [{ "src": "api/index.ts", "use": "@vercel/node" }],
+  "builds": [
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["src/**/*", "package.json", "tsconfig.json"]
+      }
+    }
+  ],
   "routes": [{ "src": "/(.*)", "dest": "/api/index.ts" }],
   "env": {
     "NODE_ENV": "production"
