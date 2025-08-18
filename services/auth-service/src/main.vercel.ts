@@ -1,0 +1,152 @@
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import helmet from 'helmet';
+import compression from 'compression';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { RateLimitInterceptor } from './common/interceptors/rate-limit.interceptor';
+import { LoggerService } from './common/services/logger.service';
+
+let app: any;
+
+async function bootstrap(): Promise<any> {
+  if (!app) {
+    app = await NestFactory.create(AppModule, {
+      logger: new LoggerService(),
+    });
+
+    const configService = app.get(ConfigService);
+    const logger = app.get(LoggerService);
+
+    // Security middleware
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'"],
+            imgSrc: ["'self'", 'data:', 'https:'],
+          },
+        },
+        crossOriginEmbedderPolicy: false,
+      }),
+    );
+
+    // Compression middleware
+    app.use(compression());
+
+    // Global prefix
+    const apiPrefix = configService.get<string>('API_PREFIX', 'api/v1');
+    app.setGlobalPrefix(apiPrefix);
+
+    // Global validation pipe with strict settings
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+        disableErrorMessages: true, // Disable in production
+        validationError: {
+          target: false,
+          value: false,
+        },
+      }),
+    );
+
+    // Global exception filter
+    app.useGlobalFilters(new GlobalExceptionFilter());
+
+    // Global rate limiting interceptor
+    app.useGlobalInterceptors(new RateLimitInterceptor());
+
+    // CORS configuration for production
+    app.enableCors({
+      origin: [
+        'https://your-frontend-domain.vercel.app',
+        'https://your-frontend-domain.com',
+        configService.get<string>(
+          'CORS_ORIGIN',
+          'https://your-frontend-domain.vercel.app',
+        ),
+      ].filter(Boolean),
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: [
+        'Origin',
+        'X-Requested-With',
+        'Content-Type',
+        'Accept',
+        'Authorization',
+        'X-API-Key',
+      ],
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    });
+
+    // Swagger documentation setup (only in development)
+    if (configService.get<string>('NODE_ENV') !== 'production') {
+      const config = new DocumentBuilder()
+        .setTitle(
+          configService.get<string>(
+            'SWAGGER_TITLE',
+            'RelativityDevHub Auth API',
+          ),
+        )
+        .setDescription(
+          configService.get<string>(
+            'SWAGGER_DESCRIPTION',
+            'Authentication service for RelativityDevHub',
+          ),
+        )
+        .setVersion(configService.get<string>('SWAGGER_VERSION', '1.0'))
+        .addTag(configService.get<string>('SWAGGER_TAG', 'auth'))
+        .addBearerAuth(
+          {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT',
+            description: 'Enter JWT token',
+            in: 'header',
+          },
+          'JWT-auth',
+        )
+        .addApiKey(
+          {
+            type: 'apiKey',
+            name: 'X-API-Key',
+            in: 'header',
+            description: 'API key for external integrations',
+          },
+          'API-Key',
+        )
+        .addServer('https://your-auth-service.vercel.app', 'Production server')
+        .build();
+
+      const document = SwaggerModule.createDocument(app, config);
+      SwaggerModule.setup('docs', app, document, {
+        swaggerOptions: {
+          persistAuthorization: true,
+          docExpansion: 'none',
+          filter: true,
+          showRequestDuration: true,
+        },
+        customSiteTitle: 'RelativityDevHub Auth API Documentation',
+      });
+    }
+
+    await app.init();
+    logger.log('🚀 Auth service initialized for Vercel', 'Bootstrap');
+  }
+
+  return app;
+}
+
+// Export for Vercel serverless functions
+export default bootstrap;

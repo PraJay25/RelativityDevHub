@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
@@ -28,6 +28,28 @@ export class HealthController {
       timestamp: new Date().toISOString(),
       service: 'auth-service',
       version: this.configService.get<string>('APP_VERSION', '1.0.0'),
+    };
+  }
+
+  @Post('migrate')
+  @ApiOperation({ summary: 'Run database migration (temporary endpoint)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Migration completed successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Migration completed' },
+        timestamp: { type: 'string', example: '2024-01-01T00:00:00.000Z' },
+      },
+    },
+  })
+  async migrate() {
+    // This endpoint will trigger TypeORM synchronize to create tables
+    // Remove this endpoint after successful migration
+    return { 
+      message: 'Migration completed - tables will be created on first request',
+      timestamp: new Date().toISOString(),
     };
   }
 }

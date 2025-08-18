@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/main.vercel.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["src/**/*", "package.json", "tsconfig.json"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/src/main.vercel.ts",
+      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "src/main.vercel.ts": {
+      "maxDuration": 30
+    }
+  }
+}

@@ -315,6 +315,57 @@ docker run -p 3001:3001 auth-service
 docker-compose up -d
 ```
 
+## ☁️ Vercel Deployment
+
+### Quick Deploy
+
+1. **Install Vercel CLI**:
+
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Run deployment script**:
+   ```bash
+   chmod +x deploy-vercel.sh
+   ./deploy-vercel.sh
+   ```
+
+### Manual Deploy
+
+1. **Set up environment variables**:
+
+   ```bash
+   cp env.example .env.local
+   # Edit .env.local with your production values
+   ```
+
+2. **Deploy to Vercel**:
+   ```bash
+   vercel --prod
+   ```
+
+### Database Setup
+
+For production, you'll need a PostgreSQL database. Recommended options:
+
+- **Supabase** (Free tier available): [supabase.com](https://supabase.com)
+- **Railway** (Free tier available): [railway.app](https://railway.app)
+- **Neon** (Free tier available): [neon.tech](https://neon.tech)
+
+### Environment Variables for Vercel
+
+Set these in your Vercel project dashboard:
+
+```env
+DATABASE_URL=postgresql://username:password@host:5432/database_name
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+CORS_ORIGIN=https://your-frontend-domain.vercel.app
+NODE_ENV=production
+```
+
+📖 **For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)**
+
 ## 📝 Scripts
 
 | Script                | Description                           |
