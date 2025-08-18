@@ -7,18 +7,14 @@ import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { RateLimitInterceptor } from './common/interceptors/rate-limit.interceptor';
-import { LoggerService } from './common/services/logger.service';
 
 let app: any;
 
 async function bootstrap(): Promise<any> {
   if (!app) {
-    app = await NestFactory.create(AppModule, {
-      logger: new LoggerService(),
-    });
+    app = await NestFactory.create(AppModule);
 
     const configService = app.get(ConfigService);
-    const logger = app.get(LoggerService);
 
     // Security middleware
     app.use(
@@ -142,7 +138,6 @@ async function bootstrap(): Promise<any> {
     }
 
     await app.init();
-    logger.log('🚀 Auth service initialized for Vercel', 'Bootstrap');
   }
 
   return app;

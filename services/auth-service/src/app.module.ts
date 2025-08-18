@@ -11,7 +11,6 @@ import { UsersModule } from './users/users.module';
 import { HealthController } from './health/health.controller';
 import { DatabaseConfig } from './config/database.config';
 import { JwtConfig } from './config/jwt.config';
-import { LoggerService } from './common/services/logger.service';
 
 /**
  * Main application module
@@ -64,13 +63,7 @@ import { LoggerService } from './common/services/logger.service';
     UsersModule,
   ],
   controllers: [HealthController],
-  providers: [
-    LoggerService,
-    {
-      provide: 'LOGGER',
-      useExisting: LoggerService,
-    },
-  ],
-  exports: [LoggerService],
+  providers: [],
+  exports: [],
 })
 export class AppModule {}

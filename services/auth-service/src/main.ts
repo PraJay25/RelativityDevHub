@@ -7,19 +7,16 @@ import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { RateLimitInterceptor } from './common/interceptors/rate-limit.interceptor';
-import { LoggerService } from './common/services/logger.service';
 
 /**
  * Bootstrap the application
  * Sets up security, validation, documentation, and performance optimizations
  */
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, {
-    logger: new LoggerService(),
-  });
+  const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
-  const logger = app.get(LoggerService);
+  // no-op logger in production
 
   // Security middleware
   app.use(
@@ -153,33 +150,19 @@ async function bootstrap(): Promise<void> {
     await app.listen(port, '0.0.0.0');
   }
 
-  logger.log(
-    `🚀 Auth service is running on: http://localhost:${port}`,
-    'Bootstrap',
-  );
-  logger.log(
-    `📚 Swagger documentation: http://localhost:${port}/docs`,
-    'Bootstrap',
-  );
-  logger.log(
-    `🔗 API endpoint: http://localhost:${port}/${apiPrefix}`,
-    'Bootstrap',
-  );
-  logger.log(`🏥 Health check: http://localhost:${port}/health`, 'Bootstrap');
-  logger.log(
-    `🌍 Environment: ${configService.get<string>('NODE_ENV', 'development')}`,
-    'Bootstrap',
-  );
+  // Minimal console outputs only in non-serverless local dev
+  if (!process.env.VERCEL) {
+    // eslint-disable-next-line no-console
+    console.log(`Auth service listening on :${port}`);
+  }
 
   // Graceful shutdown
   process.on('SIGTERM', async () => {
-    logger.log('SIGTERM received, shutting down gracefully', 'Shutdown');
     await app.close();
     process.exit(0);
   });
 
   process.on('SIGINT', async () => {
-    logger.log('SIGINT received, shutting down gracefully', 'Shutdown');
     await app.close();
     process.exit(0);
   });
