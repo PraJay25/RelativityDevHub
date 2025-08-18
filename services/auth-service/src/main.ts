@@ -145,7 +145,13 @@ async function bootstrap(): Promise<void> {
 
   // Start the application
   const port = configService.get<number>('PORT', 3001);
-  await app.listen(port, '0.0.0.0');
+
+  // For Vercel serverless deployment
+  if (process.env.VERCEL) {
+    await app.listen(port);
+  } else {
+    await app.listen(port, '0.0.0.0');
+  }
 
   logger.log(
     `🚀 Auth service is running on: http://localhost:${port}`,

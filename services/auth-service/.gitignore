@@ -99,3 +99,4 @@ Thumbs.db
 *.tmp
 *.temp
 package-minimal.json
+.vercel
