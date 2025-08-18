@@ -84,7 +84,9 @@ async function bootstrapServer() {
   });
 
   await app.init();
-  return serverless(expressApp);
+  // Bind Nest to the Express adapter for serverless runtime
+  adapter.getInstance().use(expressApp);
+  return serverless(adapter.getInstance());
 }
 
 export default async function handler(req: Request, res: Response) {
