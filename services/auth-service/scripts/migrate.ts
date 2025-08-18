@@ -5,17 +5,43 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 async function createTables() {
-  const client = new Client({
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    user: process.env.DB_USERNAME || 'postgres',
-    password: process.env.DB_PASSWORD || 'admin123',
-    database: process.env.DB_DATABASE || 'relativity_devhub',
-  });
+  const connectionString =
+    process.env.POSTGRES_URL_NON_POOLING || process.env.DATABASE_URL;
+
+  const client = connectionString
+    ? new Client({
+        connectionString,
+        ssl: { rejectUnauthorized: false },
+      })
+    : new Client({
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432'),
+        user: process.env.DB_USERNAME || 'postgres',
+        password: process.env.DB_PASSWORD || 'admin123',
+        database: process.env.DB_DATABASE || 'relativity_devhub',
+      });
 
   try {
     await client.connect();
     console.log('Connected to database');
+
+    // Ensure required extensions for UUID generation exist (Supabase-friendly)
+    try {
+      await client.query('CREATE EXTENSION IF NOT EXISTS pgcrypto');
+    } catch (e) {
+      console.warn(
+        'Could not ensure pgcrypto extension:',
+        (e as Error).message,
+      );
+    }
+    try {
+      await client.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+    } catch (e) {
+      console.warn(
+        'Could not ensure uuid-ossp extension:',
+        (e as Error).message,
+      );
+    }
 
     // Create users table
     await client.query(`
@@ -62,7 +88,6 @@ async function createTables() {
     `);
 
     console.log('Tables and indexes created successfully');
-
   } catch (error) {
     console.error('Error creating tables:', error);
     throw error;
@@ -77,7 +102,7 @@ createTables()
     console.log('Migration completed successfully');
     process.exit(0);
   })
-  .catch((error) => {
+  .catch(error => {
     console.error('Migration failed:', error);
     process.exit(1);
   });

@@ -24,8 +24,9 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
         type: 'postgres',
         url: databaseUrl,
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize:
-          this.configService.get<string>('NODE_ENV') !== 'production',
+        // When using a DATABASE_URL (cloud DB), never auto-sync.
+        // Use scripts/migrate.ts to manage schema instead.
+        synchronize: false,
         logging: this.configService.get<string>('NODE_ENV') === 'development',
         ssl: sslRequired ? { rejectUnauthorized: false } : false,
         extra: {
@@ -47,7 +48,7 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
           'relativity_devhub',
         ),
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: this.configService.get<boolean>('DB_SYNCHRONIZE', true),
+        synchronize: this.configService.get<boolean>('DB_SYNCHRONIZE', false),
         logging: this.configService.get<boolean>('DB_LOGGING', true),
         ssl:
           this.configService.get<string>('NODE_ENV') === 'production'
