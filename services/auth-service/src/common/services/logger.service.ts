@@ -11,6 +11,36 @@ export class LoggerService implements NestLoggerService {
   private readonly logger: winston.Logger;
 
   constructor() {
+    const transports: winston.transport[] = [
+      new winston.transports.Console({
+        format: winston.format.combine(
+          winston.format.colorize(),
+          winston.format.simple(),
+        ),
+      }),
+    ];
+
+    // Avoid file writes on Vercel/serverless environments
+    if (!process.env.VERCEL) {
+      transports.push(
+        new DailyRotateFile({
+          filename: 'logs/error-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          level: 'error',
+          maxSize: '20m',
+          maxFiles: '14d',
+        }),
+      );
+      transports.push(
+        new DailyRotateFile({
+          filename: 'logs/combined-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          maxSize: '20m',
+          maxFiles: '14d',
+        }),
+      );
+    }
+
     this.logger = winston.createLogger({
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
@@ -19,30 +49,7 @@ export class LoggerService implements NestLoggerService {
         winston.format.json(),
       ),
       defaultMeta: { service: 'auth-service' },
-      transports: [
-        // Console transport for development
-        new winston.transports.Console({
-          format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple(),
-          ),
-        }),
-        // File transport for errors
-        new DailyRotateFile({
-          filename: 'logs/error-%DATE%.log',
-          datePattern: 'YYYY-MM-DD',
-          level: 'error',
-          maxSize: '20m',
-          maxFiles: '14d',
-        }),
-        // File transport for all logs
-        new DailyRotateFile({
-          filename: 'logs/combined-%DATE%.log',
-          datePattern: 'YYYY-MM-DD',
-          maxSize: '20m',
-          maxFiles: '14d',
-        }),
-      ],
+      transports,
     });
   }
 
