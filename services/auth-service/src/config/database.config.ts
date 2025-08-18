@@ -7,10 +7,19 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    const databaseUrl = this.configService.get<string>('DATABASE_URL');
+    // Prefer Vercel/Supabase style env vars if present
+    const databaseUrl =
+      this.configService.get<string>('DATABASE_URL') ||
+      this.configService.get<string>('POSTGRES_URL') ||
+      this.configService.get<string>('POSTGRES_PRISMA_URL') ||
+      this.configService.get<string>('POSTGRES_URL_NON_POOLING');
 
     if (databaseUrl) {
       // Use DATABASE_URL for Vercel/production deployment
+      const sslRequired =
+        databaseUrl.includes('sslmode=require') ||
+        this.configService.get<string>('NODE_ENV') === 'production';
+
       return {
         type: 'postgres',
         url: databaseUrl,
@@ -18,10 +27,7 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
         synchronize:
           this.configService.get<string>('NODE_ENV') !== 'production',
         logging: this.configService.get<string>('NODE_ENV') === 'development',
-        ssl:
-          this.configService.get<string>('NODE_ENV') === 'production'
-            ? { rejectUnauthorized: false }
-            : false,
+        ssl: sslRequired ? { rejectUnauthorized: false } : false,
         extra: {
           max: 20, // Connection pool size
           connectionTimeoutMillis: 30000,
