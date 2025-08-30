@@ -1,9 +1,7 @@
-import { Request, Response } from 'express';
-import serverless from 'serverless-http';
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import swaggerUi from 'swagger-ui-express';
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 
@@ -24,8 +22,7 @@ app.use(
       'http://127.0.0.1:3000',
       'http://127.0.0.1:3001',
       'https://relativity-idea.vercel.app',
-      process.env.CORS_ORIGIN,
-    ].filter(Boolean),
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
@@ -73,7 +70,7 @@ const apiDocs = {
         description: 'Returns the health status of the authentication service',
         tags: ['Health'],
         responses: {
-          '200': {
+          200: {
             description: 'Service is healthy',
             content: {
               'application/json': {
@@ -124,7 +121,7 @@ const apiDocs = {
           },
         },
         responses: {
-          '200': {
+          200: {
             description: 'Login successful',
             content: {
               'application/json': {
@@ -138,8 +135,8 @@ const apiDocs = {
               },
             },
           },
-          '400': { description: 'Invalid credentials' },
-          '401': { description: 'Unauthorized' },
+          400: { description: 'Invalid credentials' },
+          401: { description: 'Unauthorized' },
         },
       },
     },
@@ -196,7 +193,7 @@ const apiDocs = {
           },
         },
         responses: {
-          '201': {
+          201: {
             description: 'Registration successful',
             content: {
               'application/json': {
@@ -210,8 +207,8 @@ const apiDocs = {
               },
             },
           },
-          '400': { description: 'Bad request - validation failed' },
-          '409': { description: 'User already exists' },
+          400: { description: 'Bad request - validation failed' },
+          409: { description: 'User already exists' },
         },
       },
     },
@@ -244,7 +241,7 @@ app.use(
 );
 
 // Health check endpoint
-app.get('/api/v1/health', (req: Request, res: Response) => {
+app.get('/api/v1/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -255,7 +252,7 @@ app.get('/api/v1/health', (req: Request, res: Response) => {
 });
 
 // Login endpoint
-app.post('/api/v1/auth/login', (req: Request, res: Response) => {
+app.post('/api/v1/auth/login', (req, res) => {
   res.status(200).json({
     message: 'Login endpoint - NestJS integration pending',
     timestamp: new Date().toISOString(),
@@ -263,7 +260,7 @@ app.post('/api/v1/auth/login', (req: Request, res: Response) => {
 });
 
 // Register endpoint
-app.post('/api/v1/auth/register', (req: Request, res: Response) => {
+app.post('/api/v1/auth/register', (req, res) => {
   res.status(201).json({
     message: 'Register endpoint - NestJS integration pending',
     timestamp: new Date().toISOString(),
@@ -271,12 +268,12 @@ app.post('/api/v1/auth/register', (req: Request, res: Response) => {
 });
 
 // Raw API docs endpoint
-app.get('/api-docs', (req: Request, res: Response) => {
+app.get('/api-docs', (req, res) => {
   res.json(apiDocs);
 });
 
 // Error handling middleware
-app.use((err: any, req: Request, res: Response, next: any) => {
+app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(500).json({
     error: 'Internal Server Error',
@@ -285,5 +282,11 @@ app.use((err: any, req: Request, res: Response, next: any) => {
   });
 });
 
-// Export the serverless handler
-export default serverless(app);
+const port = 3001;
+app.listen(port, () => {
+  console.log(`🚀 Test server running on http://localhost:${port}`);
+  console.log(`📚 Swagger documentation: http://localhost:${port}/docs`);
+  console.log(`🔗 API endpoint: http://localhost:${port}/api/v1`);
+  console.log(`🏥 Health check: http://localhost:${port}/api/v1/health`);
+  console.log(`📖 Raw API docs: http://localhost:${port}/api-docs`);
+});
