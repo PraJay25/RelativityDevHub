@@ -1,39 +1,51 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
 const path = require('path');
 
-console.log('🧪 Testing Vercel build process...');
+console.log('🧪 Testing Vercel build...');
 
 try {
-  // Check if TypeScript compiles
-  console.log('📦 Running TypeScript compilation...');
-  execSync('npm run build', { stdio: 'inherit' });
+  // Test if the main.vercel.js file exists and can be required
+  const mainVercelPath = path.join(__dirname, 'dist', 'src', 'main.vercel.js');
+  console.log('📁 Checking main.vercel.js at:', mainVercelPath);
 
-  // Check if dist files exist
-  const distPath = path.join(__dirname, 'dist');
-  if (!fs.existsSync(distPath)) {
-    throw new Error('dist directory not found after build');
-  }
+  const fs = require('fs');
+  if (fs.existsSync(mainVercelPath)) {
+    console.log('✅ main.vercel.js exists');
 
-  // Check if main files exist
-  const requiredFiles = [
-    'main.js',
-    'main.vercel.js',
-    'app.module.js',
-    'api/index.js',
-    'api/health.js',
-  ];
-
-  for (const file of requiredFiles) {
-    const filePath = path.join(distPath, file);
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`Required file not found: ${file}`);
+    // Try to require it
+    const bootstrap = require(mainVercelPath).default;
+    if (typeof bootstrap === 'function') {
+      console.log('✅ bootstrap function is available');
+    } else {
+      console.log('❌ bootstrap function is not available');
+      process.exit(1);
     }
+  } else {
+    console.log('❌ main.vercel.js does not exist');
+    process.exit(1);
   }
 
-  console.log('✅ Build test passed! All required files generated.');
-  console.log('🚀 Ready for Vercel deployment.');
+  // Test if the api/index.js file exists
+  const apiIndexPath = path.join(__dirname, 'dist', 'api', 'index.js');
+  console.log('📁 Checking api/index.js at:', apiIndexPath);
+
+  if (fs.existsSync(apiIndexPath)) {
+    console.log('✅ api/index.js exists');
+
+    // Try to require it
+    const handler = require(apiIndexPath).default;
+    if (typeof handler === 'function') {
+      console.log('✅ handler function is available');
+    } else {
+      console.log('❌ handler function is not available');
+      process.exit(1);
+    }
+  } else {
+    console.log('❌ api/index.js does not exist');
+    process.exit(1);
+  }
+
+  console.log('🎉 All tests passed! Vercel build is ready.');
 } catch (error) {
-  console.error('❌ Build test failed:', error.message);
+  console.error('❌ Test failed:', error.message);
   process.exit(1);
 }

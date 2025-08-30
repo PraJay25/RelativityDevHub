@@ -17,7 +17,7 @@ async function bootstrap(): Promise<any> {
     const configService = app.get(ConfigService as any);
 
     // Security middleware
-    (app as any).use(
+    app.use(
       helmet({
         contentSecurityPolicy: {
           directives: {
@@ -32,11 +32,11 @@ async function bootstrap(): Promise<any> {
     );
 
     // Compression middleware
-    (app as any).use(compression());
+    app.use(compression());
 
     // Global prefix
     const apiPrefix = (configService.get('API_PREFIX') as string) ?? 'api/v1';
-    (app as any).setGlobalPrefix(apiPrefix);
+    app.setGlobalPrefix(apiPrefix);
 
     // Global validation pipe with strict settings
     app.useGlobalPipes(
