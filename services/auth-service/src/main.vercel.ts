@@ -47,7 +47,8 @@ async function bootstrap(): Promise<any> {
         transformOptions: {
           enableImplicitConversion: true,
         },
-        disableErrorMessages: true,
+        disableErrorMessages:
+          (configService.get('NODE_ENV') as string) === 'production',
         validationError: {
           target: false,
           value: false,
@@ -61,14 +62,19 @@ async function bootstrap(): Promise<any> {
     // Global rate limiting interceptor
     app.useGlobalInterceptors(new RateLimitInterceptor());
 
-    // CORS configuration for production
+    // CORS configuration - more permissive for testing
+    const corsOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+      'https://your-frontend-domain.vercel.app',
+      'https://your-frontend-domain.com',
+      configService.get('CORS_ORIGIN') as string,
+    ].filter(Boolean);
+
     app.enableCors({
-      origin: [
-        'https://your-frontend-domain.vercel.app',
-        'https://your-frontend-domain.com',
-        (configService.get('CORS_ORIGIN') as string) ??
-          'https://your-frontend-domain.vercel.app',
-      ].filter(Boolean),
+      origin: corsOrigins.length > 0 ? corsOrigins : true, // Allow all origins if none specified
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: [

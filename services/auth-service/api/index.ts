@@ -6,14 +6,27 @@ let server: any;
 
 async function getServer() {
   if (!server) {
-    const app = await bootstrap();
-    const expressInstance = app.getHttpAdapter().getInstance();
-    server = serverless(expressInstance);
+    try {
+      const app = await bootstrap();
+      const expressInstance = app.getHttpAdapter().getInstance();
+      server = serverless(expressInstance);
+    } catch (error) {
+      console.error('Failed to bootstrap application:', error);
+      throw error;
+    }
   }
   return server;
 }
 
 export default async function handler(req: Request, res: Response) {
-  const srv = await getServer();
-  return srv(req, res);
+  try {
+    const srv = await getServer();
+    return srv(req, res);
+  } catch (error) {
+    console.error('Handler error:', error);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to process request',
+    });
+  }
 }
