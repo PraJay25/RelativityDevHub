@@ -3,11 +3,11 @@
   "routes": [
     {
       "src": "/docs",
-      "dest": "/api/index.ts"
+      "dest": "/api/docs.ts"
     },
     {
       "src": "/api-docs",
-      "dest": "/api/index.ts"
+      "dest": "/api/docs.ts"
     },
     {
       "src": "/api/v1/health",
