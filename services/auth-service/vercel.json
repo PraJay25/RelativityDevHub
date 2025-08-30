@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 30
-    }
-  },
   "routes": [
+    {
+      "src": "/api/v1/health",
+      "dest": "/api/health.ts"
+    },
     {
       "src": "/(.*)",
       "dest": "/api/index.ts"

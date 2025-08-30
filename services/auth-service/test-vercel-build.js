@@ -21,6 +21,7 @@ try {
     'main.vercel.js',
     'app.module.js',
     'api/index.js',
+    'api/health.js',
   ];
 
   for (const file of requiredFiles) {
