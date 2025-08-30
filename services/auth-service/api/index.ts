@@ -227,21 +227,25 @@ const apiDocs = {
   },
 };
 
-// Swagger UI setup
-app.use(
-  '/docs',
-  swaggerUi.serve,
-  swaggerUi.setup(apiDocs, {
-    customSiteTitle: 'RelativityDevHub Auth API Documentation',
-    swaggerOptions: {
-      persistAuthorization: true,
-      docExpansion: 'none',
-      filter: true,
-      showRequestDuration: true,
-    },
-    customCss: '.swagger-ui .topbar { display: none }',
-  }),
-);
+// Raw API docs endpoint (serve this first)
+app.get('/api-docs', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json(apiDocs);
+});
+
+// Swagger UI setup with explicit options
+app.use('/docs', swaggerUi.serve);
+app.get('/docs', swaggerUi.setup(apiDocs, {
+  customSiteTitle: 'RelativityDevHub Auth API Documentation',
+  swaggerOptions: {
+    url: '/api-docs',
+    persistAuthorization: true,
+    docExpansion: 'none',
+    filter: true,
+    showRequestDuration: true,
+  },
+  customCss: '.swagger-ui .topbar { display: none }',
+}));
 
 // Health check endpoint
 app.get('/api/v1/health', (req: Request, res: Response) => {
@@ -268,11 +272,6 @@ app.post('/api/v1/auth/register', (req: Request, res: Response) => {
     message: 'Register endpoint - NestJS integration pending',
     timestamp: new Date().toISOString(),
   });
-});
-
-// Raw API docs endpoint
-app.get('/api-docs', (req: Request, res: Response) => {
-  res.json(apiDocs);
 });
 
 // Error handling middleware

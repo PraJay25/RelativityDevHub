@@ -2,6 +2,14 @@
   "version": 2,
   "routes": [
     {
+      "src": "/docs",
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/api-docs",
+      "dest": "/api/index.ts"
+    },
+    {
       "src": "/api/v1/health",
       "dest": "/api/health.ts"
     },
